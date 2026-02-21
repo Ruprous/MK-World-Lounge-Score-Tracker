@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MK World Lounge Score Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="app__header">
+      <h1>MK World Lounge Score Tracker</h1>
+      <p class="subtitle">1模擬（12レース）単位のスコア管理と統計可視化</p>
+    </header>
+
+    <section class="card" id="current-mogi">
+      <div class="card__header">
+        <h2>現在の模擬</h2>
+        <div class="status" id="mogi-status">進行中</div>
+      </div>
+
+      <div class="grid">
+        <label class="field">
+          <span>日付</span>
+          <input type="date" id="mogi-date" />
+        </label>
+        <label class="field">
+          <span>参加人数</span>
+          <select id="participants">
+            <option value="12">12人</option>
+            <option value="24">24人</option>
+          </select>
+        </label>
+        <div class="field">
+          <span>模擬平均順位</span>
+          <div class="metric" id="mogi-average">-</div>
+        </div>
+        <div class="field">
+          <span>現在のポイント</span>
+          <div class="metric" id="current-points">0</div>
+        </div>
+        <div class="field">
+          <span>レース数</span>
+          <div class="metric" id="race-count">0 / 12</div>
+        </div>
+      </div>
+
+      <div class="input-row">
+        <label class="field">
+          <span>レース入力（X / Y）</span>
+          <input type="text" id="race-input" placeholder="例: 5 / 12" />
+          <small class="hint">X: レース順位, Y: その時点の総合順位</small>
+        </label>
+        <label class="field">
+          <span>コース入力</span>
+          <input type="text" id="course-input" placeholder="正式名称または略称" />
+          <small class="hint" id="course-warning"></small>
+        </label>
+        <button id="add-race" class="primary">追加</button>
+      </div>
+
+      <div class="pill-list" id="used-courses"></div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>レース</th>
+              <th>順位</th>
+              <th>総合順位</th>
+              <th>累計ポイント</th>
+              <th>コース</th>
+            </tr>
+          </thead>
+          <tbody id="race-table"></tbody>
+        </table>
+      </div>
+
+      <div class="end-section" id="end-section">
+        <label class="field">
+          <span>最終順位</span>
+          <input type="number" id="final-rank" min="1" />
+        </label>
+        <button id="save-mogi" class="primary" disabled>模擬を保存</button>
+        <button id="reset-mogi" class="ghost">模擬をリセット</button>
+        <div class="hint" id="save-hint"></div>
+      </div>
+    </section>
+
+    <section class="card" id="overall">
+      <div class="card__header">
+        <h2>全体統計</h2>
+      </div>
+      <div class="input-row">
+        <button id="export-data" class="primary">データをエクスポート</button>
+        <label class="field">
+          <span>データをインポート</span>
+          <input type="file" id="import-data" accept="application/json" />
+        </label>
+      </div>
+      <h3>全模擬統計（参加人数別）</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>参加人数</th>
+              <th>模擬数</th>
+              <th>平均順位</th>
+              <th>平均ポイント</th>
+            </tr>
+          </thead>
+          <tbody id="overall-stats"></tbody>
+        </table>
+      </div>
+
+      <h3>レース順位統計（参加人数別）</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>参加人数</th>
+              <th>レース数</th>
+              <th>平均順位</th>
+              <th>最高順位</th>
+              <th>最低順位</th>
+              <th>勝率</th>
+            </tr>
+          </thead>
+          <tbody id="race-stats"></tbody>
+        </table>
+      </div>
+
+      <h3>模擬履歴</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>日付</th>
+              <th>参加人数</th>
+              <th>最終順位</th>
+              <th>模擬平均順位</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="history-table"></tbody>
+        </table>
+      </div>
+
+      <h3>コース別統計</h3>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>コース</th>
+              <th>出走回数</th>
+              <th>平均順位</th>
+              <th>最高順位</th>
+              <th>最低順位</th>
+            </tr>
+          </thead>
+          <tbody id="course-stats"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card" id="credits">
+      <div class="card__header">
+        <h2>リンク / 注意事項</h2>
+      </div>
+      <ul class="link-list">
+        <li>
+          配布元: <a href="https://github.com/Ruprous/MK-World-Lounge-Score-Tracker" target="_blank" rel="noopener noreferrer">https://github.com/Ruprous/MK-World-Lounge-Score-Tracker</a>
+        </li>
+        <li>
+          MKCentral: <a href="https://mkcentral.com/" target="_blank" rel="noopener noreferrer">https://mkcentral.com/</a>
+        </li>
+        <li>
+          MKWorld Lounge: <a href="https://lounge.mkcentral.com/mkworld" target="_blank" rel="noopener noreferrer">https://lounge.mkcentral.com/mkworld</a>
+        </li>
+      </ul>
+      <p class="disclaimer">
+        本ソフトウェアはMKCentralの許諾を受けたものではありません。
+      </p>
+      <p class="disclaimer">
+        This software is not affiliated with or endorsed by MKCentral.
+      </p>
+      <p class="disclaimer">© 2026 Ruprous</p>
+    </section>
+  </div>
+
+  <script type="application/json" id="course-data">
+    [
+    	{ "id": "4", "name": "DKうちゅうセンター", "aliases": ["DKうちゅう", "DKウチュウ"] },
+    	{
+    		"id": "9",
+    		"name": "DKスノーマウンテン",
+    		"aliases": ["DK雪山", "DKスノ山", "DKすの山", "スノマ", "すのま"]
+    	},
+    	{ "id": "11", "name": "アイスビルディング", "aliases": ["アイビル", "あいびる"] },
+    	{ "id": "21", "name": "おばけシネマ", "aliases": ["おばシネ", "おばしね", "オバシネ"] },
+    	{
+    		"id": "25",
+    		"name": "キノピオファクトリー",
+    		"aliases": ["キノファク", "きのふぁく", "ファクトリー", "ふぁくとりー"]
+    	},
+    	{ "id": "8", "name": "キラーシップ", "aliases": ["キラシ", "きらし"] },
+    	{ "id": "26", "name": "クッパキャッスル", "aliases": ["クパキャ", "くぱきゃ"] },
+    	{ "id": "5", "name": "サンサンさばく", "aliases": ["サンサン", "さんさん", "さんさば", "サンサバ"] },
+    	{ "id": "3", "name": "シュポポコースター", "aliases": ["シュポコ", "しゅぽこ"] },
+    	{ "id": "20", "name": "ショーニューロード", "aliases": ["ショーニュー", "しょーにゅー"] },
+    	{ "id": "16", "name": "ソルティータウン", "aliases": ["ソルティー", "そるてぃー"] },
+    	{ "id": "24", "name": "チョコマウンテン", "aliases": ["チョコマ", "ちょこま"] },
+    	{
+    		"id": "17",
+    		"name": "ディノディノジャングル",
+    		"aliases": ["ディノディノ", "でぃのでぃの"]
+    	},
+    	{ "id": "2", "name": "トロフィーシティ", "aliases": ["トロフィー", "とろふぃー"] },
+    	{
+    		"id": "27",
+    		"name": "どんぐりツリーハウス",
+    		"aliases": ["どんつり", "どんツリ", "ドンツリ"]
+    	},
+    	{ "id": "13", "name": "ノコノコビーチ", "aliases": ["ノコビ", "のこび"] },
+    	{
+    		"id": "18",
+    		"name": "ハテナしんでん",
+    		"aliases": ["ハテしん", "はてしん", "ハテシン"]
+    	},
+    	{ "id": "29", "name": "ピーチスタジアム", "aliases": ["ピチスタ", "ぴちすた"] },
+    	{ "id": "15", "name": "ピーチビーチ", "aliases": ["ピチビ", "ぴちび"] },
+    	{ "id": "19", "name": "プクプクフォールズ", "aliases": ["ぷくふぉ", "プクフォ"] },
+    	{ "id": "6", "name": "ヘイホーカーニバル", "aliases": ["へいかに", "ヘイカニ"] },
+    	{
+    		"id": "22",
+    		"name": "ホネホネツイスター",
+    		"aliases": ["ほねつい", "ホネツイ", "ほねほね", "ホネホネ"]
+    	},
+    	{ "id": "28", "name": "マリオサーキット", "aliases": ["まりさ", "マリサ"] },
+    	{ "id": "1", "name": "マリオブラザーズサーキット", "aliases": ["まりぶら", "マリブラ","まりぶさ","マリブサ"] },
+    	{ "id": "23", "name": "モーモーカントリー", "aliases": ["ももかん", "モモカン"] },
+    	{ "id": "14", "name": "リバーサイドサファリ", "aliases": ["りばさ", "リバサ"] },
+    	{ "id": "30", "name": "レインボーロード", "aliases": ["にじ", "ニジ", "虹"] },
+    	{ "id": "10", "name": "ロゼッタてんもんだい", "aliases": ["ろぜてん", "ロゼテン"] },
+    	{ "id": "12", "name": "ワリオシップ", "aliases": ["わりし", "ワリシ"] },
+    	{ "id": "7", "name": "ワリオスタジアム", "aliases": ["わりすた", "ワリスタ"] }
+    ]
+  </script>
+  <script src="app.js"></script>
+</body>
+</html>
