@@ -388,11 +388,26 @@ const handleSaveMogi = () => {
 };
 
 const handleResetMogi = () => {
-  if (!confirm("現在の模擬をリセットしますか？")) {
+  const hasInputs =
+    state.currentMogi.races.length > 0 ||
+    elements.raceInput.value.trim() ||
+    elements.courseInput.value.trim();
+  if (!hasInputs) {
+    alert("リセットする入力がありません。");
+    return;
+  }
+  if (
+    !confirm(
+      "現在入力中のレースがリセットされます。終了した模擬はリセットされません。\nリセットしますか？"
+    )
+  ) {
     return;
   }
   state.currentMogi = createEmptyMogi();
   elements.saveHint.textContent = "";
+  elements.raceInput.value = "";
+  elements.courseInput.value = "";
+  updateCourseWarning("");
   saveStorage();
   render();
 };

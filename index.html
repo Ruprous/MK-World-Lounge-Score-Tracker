@@ -56,7 +56,10 @@
           <input type="text" id="course-input" placeholder="正式名称または略称" />
           <small class="hint" id="course-warning"></small>
         </label>
-        <button id="add-race" class="primary">追加</button>
+        <div class="button-row">
+          <button id="add-race" class="primary">追加</button>
+          <button id="reset-mogi" class="ghost">入力をリセット</button>
+        </div>
       </div>
 
       <div class="pill-list" id="used-courses"></div>
@@ -82,7 +85,6 @@
           <input type="number" id="final-rank" min="1" />
         </label>
         <button id="save-mogi" class="primary" disabled>模擬を保存</button>
-        <button id="reset-mogi" class="ghost">模擬をリセット</button>
         <div class="hint" id="save-hint"></div>
       </div>
     </section>
